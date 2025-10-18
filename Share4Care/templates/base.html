@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share4Care</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Details/Summary styling */
+        details {
+            position: relative;
+        }
+
+        summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary {
+            color: #e0e0e0;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            z-index: 50;
+            margin-top: 0.5rem;
+        }
+
+        .about-dropdown {
+            left: -8rem;
+            width: 24rem;
+            max-height: 24rem;
+            overflow-y: auto;
+            color: #1f2937;
+        }
+
+        .user-dropdown {
+            right: 0;
+            width: 12rem;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #1f2937;
+        }
+
+        .user-dropdown a:hover {
+            background-color: #f3f4f6;
+        }
+
+        .user-dropdown a.logout {
+            color: #dc2626;
+        }
+
+        .dropdown-content hr {
+            border-color: #e5e7eb;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="{% url 'home' %}" class="text-2xl font-bold">Share4Care</a>
+
+            <div class="flex items-center space-x-6">
+                <!-- About Us Dropdown (Click to toggle) -->
+                <details class="relative">
+                    <summary class="hover:text-gray-200 transition flex items-center">
+                        About Us
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+
+                    <div class="dropdown-content about-dropdown">
+                        <h3 class="text-lg font-bold mb-3 text-blue-800">About Share4Care</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            Share4Care connects generous donors with those in need.
+                            We believe in the power of community and sharing essentials like food, clothing, and furniture.
+                        </p>
+                        <h4 class="font-bold text-gray-800 mb-3">Our Team</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                                <img src="{% static 'admin_images/admin1.jpg' %}" alt="Admin 1"
+                                     class="w-12 h-12 rounded-full object-cover border-2 border-blue-600 flex-shrink-0">
+                                <p class="text-sm font-semibold">Redwan Ahmed</p>
+                            </div>
+                            <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                                <img src="{% static 'admin_images/admin2.jpg' %}" alt="Admin 2"
+                                     class="w-12 h-12 rounded-full object-cover border-2 border-green-600 flex-shrink-0">
+                                <p class="text-sm font-semibold">Farhana Chowdhury</p>
+                            </div>
+                            <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                                <img src="{% static 'admin_images/admin3.jpg' %}" alt="Admin 3"
+                                     class="w-12 h-12 rounded-full object-cover border-2 border-purple-600 flex-shrink-0">
+                                <p class="text-sm font-semibold">Sadia Akter Keya</p>
+                            </div>
+                            <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                                <img src="{% static 'admin_images/admin4.jpg' %}" alt="Admin 4"
+                                     class="w-12 h-12 rounded-full object-cover border-2 border-red-600 flex-shrink-0">
+                                <p class="text-sm font-semibold">Raj Kumar Saha</p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <a href="{% url 'home' %}" class="hover:text-gray-200 transition">Home</a>
+
+                {% if user.is_authenticated %}
+                    <!-- User Dropdown (Click to toggle) -->
+                    <details class="relative">
+                        <summary class="flex items-center space-x-2 hover:text-gray-200 transition">
+                            <span>{{ user.username }}</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+
+                        <div class="dropdown-content user-dropdown">
+                            <a href="{% url 'profile' %}">View Profile</a>
+                            <a href="{% url 'edit_profile' %}">Edit Profile</a>
+                            <a href="{% url 'change_password' %}">Change Password</a>
+                            <hr>
+                            <a href="{% url 'logout' %}" class="logout">Logout</a>
+                        </div>
+                    </details>
+                {% else %}
+                    <a href="{% url 'register' %}" class="bg-white text-blue-600 hover:bg-gray-100 px-4 py-2 rounded transition">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+        <div class="container mx-auto px-4 mt-4">
+            {% for message in messages %}
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-2">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center py-6 mt-20">
+        <p>&copy; 2025 Share4Care. All rights reserved.</p>
+    </footer>
+</body>
+</html>
