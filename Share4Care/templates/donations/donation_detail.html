@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+
+        {% if donation.image %}
+            <img src="{{ donation.image.url }}" alt="{{ donation.title }}"
+                 class="w-full h-96 object-cover">
+        {% else %}
+            <div class="w-full h-96 bg-gray-200 flex items-center justify-center">
+                <span class="text-gray-400 text-6xl">📦</span>
+            </div>
+        {% endif %}
+
+        <div class="p-8">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="text-3xl font-bold text-gray-800">{{ donation.title }}</h2>
+                <span class="px-4 py-2 rounded-full text-sm font-semibold
+                    {% if donation.status == 'available' %}bg-green-100 text-green-800
+                    {% elif donation.status == 'claimed' %}bg-yellow-100 text-yellow-800
+                    {% elif donation.status == 'collected' %}bg-blue-100 text-blue-800
+                    {% else %}bg-red-100 text-red-800{% endif %}">
+                    {{ donation.get_status_display }}
+                </span>
+            </div>
+
+            <div class="border-t border-b border-gray-200 py-4 mb-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-gray-600 text-sm">Category</p>
+                        <p class="text-gray-800 font-semibold">{{ donation.get_category_display }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Quantity</p>
+                        <p class="text-gray-800 font-semibold">{{ donation.quantity }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">City</p>
+                        <p class="text-gray-800 font-semibold">{{ donation.city }}</p>
+                    </div>
+                    {% if donation.expiration_date %}
+                    <div>
+                        <p class="text-gray-600 text-sm">Expiration Date</p>
+                        <p class="text-gray-800 font-semibold">{{ donation.expiration_date }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Description</h3>
+                <p class="text-gray-600">{{ donation.description }}</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Pickup Address</h3>
+                <p class="text-gray-600">{{ donation.pickup_address }}</p>
+            </div>
+
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Donor Information</h3>
+                <div class="flex items-center space-x-4">
+                    {% if donation.donor.userprofile.profile_picture %}
+                        <img src="{{ donation.donor.userprofile.profile_picture.url }}"
+                             alt="{{ donation.donor.username }}"
+                             class="w-16 h-16 rounded-full object-cover border-2 border-blue-600">
+                    {% else %}
+                        <div class="bg-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold">
+                            {{ donation.donor.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <p class="text-gray-800 font-semibold">{{ donation.donor.first_name|default:donation.donor.username }}</p>
+                        <p class="text-gray-600 text-sm">@{{ donation.donor.username }}</p>
+                        {% if donation.donor.userprofile.phone %}
+                            <p class="text-gray-600 text-sm">📞 {{ donation.donor.userprofile.phone }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-sm text-gray-500 mb-6">
+                <p>Posted on: {{ donation.created_at|date:"F j, Y, g:i a" }}</p>
+                {% if donation.updated_at != donation.created_at %}
+                    <p>Last updated: {{ donation.updated_at|date:"F j, Y, g:i a" }}</p>
+                {% endif %}
+            </div>
+
+            <div class="flex gap-4">
+                {% if donation.donor == user %}
+                    <a href="{% url 'update_donation' donation.id %}"
+                       class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded transition">
+                        Edit Donation
+                    </a>
+                    <a href="{% url 'delete_donation' donation.id %}"
+                       class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded transition">
+                        Delete Donation
+                    </a>
+                {% endif %}
+                <a href="{% url 'my_donations' %}"
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition">
+                    Back to My Donations
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
