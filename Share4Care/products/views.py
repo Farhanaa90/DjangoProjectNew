@@ -1,81 +1,57 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from products.models import Donation
 from .forms import DonationForm
-from users.models import UserProfile
 
 
-@login_required
 def create_donation(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
-        category = request.POST.get('category')
-        quantity = request.POST.get('quantity')
-        description = request.POST.get('description')
-        pickup_address = request.POST.get('pickup_address')
-        city = request.POST.get('city')
-        expiration_date = request.POST.get('expiration_date')
-        image = request.FILES.get('image')
+        form = DonationForm(request.POST, request.FILES)
+        if form.is_valid():
+            donation = form.save(commit=False)
+            donation.donor = request.user
+            donation.save()
+            return redirect('my_donations')
+    else:
+        form = DonationForm()
+    return render(request, 'donations/create_donation.html', {'form': form})
 
-        donation = Donation.objects.create(
-            donor=request.user,
-            title=title,
-            category=category,
-            quantity=quantity,
-            description=description,
-            pickup_address=pickup_address,
-            city=city,
-            expiration_date=expiration_date if expiration_date else None,
-            image=image if image else None
-        )
-
-        return redirect('my_donations')
-
-    return render(request, 'donations/create_donation.html')
-
-
-@login_required
 def my_donations(request):
-    user_profile = UserProfile.objects.get(user=request.user)
-
-    if user_profile.user_type != 'donor':
-        messages.error(request, 'Only donors can view donations!')
-        return redirect('dashboard')
-
-    donations = Donation.objects.filter(donor=request.user).order_by('-created_at')
+    donations = Donation.objects.all()
     return render(request, 'donations/my_donations.html', {'donations': donations})
 
 
-@login_required
 def donation_detail(request, pk):
-    donation = get_object_or_404(Donation, pk=pk)
+    donation = Donation.objects.get(pk=pk)
     return render(request, 'donations/donation_detail.html', {'donation': donation})
 
-
-@login_required
 def update_donation(request, pk):
-    donation = Donation.objects.get(pk=pk, donor=request.user)
+    donation = Donation.objects.get(pk=pk)
 
     if request.method == 'POST':
-        form = DonationForm(request.POST, request.FILES, instance=donation)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Donation updated successfully!')
-            return redirect('my_donations')
-    else:
-        form = DonationForm(instance=donation)
+        donation.title = request.POST.get('title')
+        donation.category = request.POST.get('category')
+        donation.quantity = request.POST.get('quantity')
+        donation.description = request.POST.get('description')
+        donation.pickup_address = request.POST.get('pickup_address')
+        donation.city = request.POST.get('city')
 
-    return render(request, 'donations/update_donation.html', {'form': form, 'donation': donation})
+        expiration_date = request.POST.get('expiration_date')
+        if expiration_date:
+            donation.expiration_date = expiration_date
 
+        if request.FILES.get('image'):
+            donation.image = request.FILES.get('image')
 
-@login_required
-def delete_donation(request, pk):
-    donation = get_object_or_404(Donation, pk=pk, donor=request.user)
-
-    if request.method == 'POST':
-        donation.delete()
-        messages.success(request, 'Donation deleted successfully!')
+        donation.save()
         return redirect('my_donations')
 
+    return render(request, 'donations/update_donation.html', {'donation': donation})
+
+def delete_donation(request, pk):
+    donation = Donation.objects.get(pk=pk)
+    if request.method == 'POST':
+        donation.delete()
+        return redirect('my_donations')
     return render(request, 'donations/delete_donation.html', {'donation': donation})
