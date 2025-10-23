@@ -60,23 +60,32 @@
 
             <div class="bg-blue-50 rounded-lg p-6 mb-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-3">Donor Information</h3>
-                <div class="flex items-center space-x-4">
-                    {% if donation.donor.userprofile.profile_picture %}
-                        <img src="{{ donation.donor.userprofile.profile_picture.url }}"
-                             alt="{{ donation.donor.username }}"
-                             class="w-16 h-16 rounded-full object-cover border-2 border-blue-600">
-                    {% else %}
-                        <div class="bg-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold">
-                            {{ donation.donor.username|slice:":1"|upper }}
-                        </div>
-                    {% endif %}
-                    <div>
-                        <p class="text-gray-800 font-semibold">{{ donation.donor.first_name|default:donation.donor.username }}</p>
-                        <p class="text-gray-600 text-sm">@{{ donation.donor.username }}</p>
-                        {% if donation.donor.userprofile.phone %}
-                            <p class="text-gray-600 text-sm">📞 {{ donation.donor.userprofile.phone }}</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        {% if donation.donor.userprofile.profile_picture %}
+                            <img src="{{ donation.donor.userprofile.profile_picture.url }}"
+                                 alt="{{ donation.donor.username }}"
+                                 class="w-16 h-16 rounded-full object-cover border-2 border-blue-600">
+                        {% else %}
+                            <div class="bg-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold">
+                                {{ donation.donor.username|slice:":1"|upper }}
+                            </div>
                         {% endif %}
+                        <div>
+                            <p class="text-gray-800 font-semibold">{{ donation.donor.first_name|default:donation.donor.username }}</p>
+                            <p class="text-gray-600 text-sm">@{{ donation.donor.username }}</p>
+                            {% if donation.donor.userprofile.phone %}
+                                <p class="text-gray-600 text-sm">📞 {{ donation.donor.userprofile.phone }}</p>
+                            {% endif %}
+                        </div>
                     </div>
+
+                    {% if donation.donor != user %}
+                    <a href="{% url 'send_message' donation.donor.id %}"
+                       class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition">
+                        📨 Send Message
+                    </a>
+                    {% endif %}
                 </div>
             </div>
 
