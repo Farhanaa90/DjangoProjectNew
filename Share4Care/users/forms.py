@@ -20,3 +20,8 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['phone', 'address', 'city']
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['subject', 'content']
