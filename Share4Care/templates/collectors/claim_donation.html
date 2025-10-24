@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+
+        <div class="bg-blue-600 text-white px-8 py-4">
+            <h2 class="text-3xl font-bold">Claim Donation</h2>
+        </div>
+
+        <div class="p-8">
+            <div class="mb-6">
+                {% if donation.image %}
+                    <img src="{{ donation.image.url }}" alt="{{ donation.title }}"
+                         class="w-full h-64 object-cover rounded-lg mb-4">
+                {% else %}
+                    <div class="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg mb-4">
+                        <span class="text-gray-400 text-6xl">📦</span>
+                    </div>
+                {% endif %}
+
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ donation.title }}</h3>
+                <p class="text-gray-600 mb-4">{{ donation.description }}</p>
+
+                <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                    <div>
+                        <p class="text-gray-600 text-sm">Category</p>
+                        <p class="text-gray-800 font-semibold">{{ donation.get_category_display }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Quantity</p>
+                        <p class="text-gray-800 font-semibold">{{ donation.quantity }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">City</p>
+                        <p class="text-gray-800 font-semibold">{{ donation.city }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Pickup Address</p>
+                        <p class="text-gray-800 font-semibold">{{ donation.pickup_address|truncatewords:5 }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                <p class="text-yellow-700">
+                    <strong>📝 Note:</strong> After claiming, the donor will review your request.
+                    Please provide a message explaining why you need this donation.
+                </p>
+            </div>
+
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Message to Donor (Optional)</label>
+                    <textarea name="message" rows="4"
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                              placeholder="Explain why you need this donation..."></textarea>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="submit"
+                            class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg transition font-semibold">
+                        ✓ Confirm Claim Request
+                    </button>
+                    <a href="{% url 'browse_donations' %}"
+                       class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-lg transition inline-block text-center">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
