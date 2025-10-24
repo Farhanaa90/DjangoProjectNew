@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">My Claimed Donations</h2>
+            <a href="{% url 'browse_donations' %}"
+               class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded transition">
+                Browse More Donations
+            </a>
+        </div>
+
+        {% if claims %}
+            <div class="space-y-4">
+                {% for claim in claims %}
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-1/4">
+                            {% if claim.donation.image %}
+                                <img src="{{ claim.donation.image.url }}" alt="{{ claim.donation.title }}"
+                                     class="w-full h-48 md:h-full object-cover">
+                            {% else %}
+                                <div class="w-full h-48 md:h-full bg-gray-200 flex items-center justify-center">
+                                    <span class="text-gray-400 text-5xl">📦</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="md:w-3/4 p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-800">{{ claim.donation.title }}</h3>
+                                    <p class="text-gray-600 text-sm mt-1">Claimed on: {{ claim.claimed_at|date:"F j, Y, g:i a" }}</p>
+                                </div>
+                                <span class="px-4 py-2 rounded-full text-sm font-semibold
+                                    {% if claim.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif claim.status == 'approved' %}bg-green-100 text-green-800
+                                    {% elif claim.status == 'collected' %}bg-blue-100 text-blue-800
+                                    {% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ claim.get_status_display }}
+                                </span>
+                            </div>
+
+                            <p class="text-gray-600 mb-4">{{ claim.donation.description|truncatewords:25 }}</p>
+
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-gray-600 mb-4">
+                                <div>
+                                    <p class="font-semibold text-gray-700">Category</p>
+                                    <p>{{ claim.donation.get_category_display }}</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-700">Quantity</p>
+                                    <p>{{ claim.donation.quantity }}</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-700">City</p>
+                                    <p>{{ claim.donation.city }}</p>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-700">Donor</p>
+                                    <p>{{ claim.donation.donor.first_name|default:claim.donation.donor.username }}</p>
+                                </div>
+                            </div>
+
+                            {% if claim.message %}
+                            <div class="bg-gray-50 border-l-4 border-blue-500 p-3 mb-4">
+                                <p class="text-sm text-gray-700"><strong>Your Message:</strong> {{ claim.message }}</p>
+                            </div>
+                            {% endif %}
+
+                            <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                                <h4 class="font-semibold text-gray-800 mb-2">📍 Pickup Address:</h4>
+                                <p class="text-gray-700">{{ claim.donation.pickup_address }}</p>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <a href="{% url 'donation_detail' claim.donation.id %}"
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition">
+                                    View Full Details
+                                </a>
+
+                                {% if claim.status == 'pending' %}
+                                <a href="{% url 'cancel_claim' claim.id %}"
+                                   onclick="return confirm('Are you sure you want to cancel this claim?')"
+                                   class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition">
+                                    Cancel Claim
+                                </a>
+                                {% endif %}
+
+                                {% if claim.status == 'approved' %}
+                                <span class="bg-green-100 text-green-800 px-4 py-2 rounded text-sm font-semibold">
+                                    ✓ Approved - Contact donor to collect
+                                </span>
+                                <a href="{% url 'send_message' claim.donation.donor.id %}"
+                                   class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded text-sm transition">
+                                    📨 Message Donor
+                                </a>
+                                {% endif %}
+
+                                {% if claim.status == 'rejected' %}
+                                <span class="bg-red-100 text-red-800 px-4 py-2 rounded text-sm font-semibold">
+                                    ✗ Request was rejected
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+                <span class="text-6xl mb-4 block">📋</span>
+                <p class="text-gray-500 text-lg mb-4">You haven't claimed any donations yet.</p>
+                <a href="{% url 'browse_donations' %}"
+                   class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded transition inline-block">
+                    Browse Available Donations
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="mt-6">
+            <a href="{% url 'dashboard' %}"
+               class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition inline-block">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
