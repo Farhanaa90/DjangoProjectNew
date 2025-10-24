@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">
+                Notifications
+                {% if unread_count > 0 %}
+                <span class="text-sm bg-red-500 text-white px-3 py-1 rounded-full">{{ unread_count }} New</span>
+                {% endif %}
+            </h2>
+        </div>
+
+        {% if notifications %}
+            <div class="space-y-3">
+                {% for notification in notifications %}
+                <div class="bg-white rounded-lg shadow-lg p-6 {% if notification.is_read == False %}border-l-4 border-blue-600{% endif %}">
+                    <div class="flex justify-between items-start mb-3">
+                        <p class="text-gray-800 text-lg">{{ notification.message }}</p>
+                        {% if notification.is_read == False %}
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-semibold">New</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-sm text-gray-500 mb-4">{{ notification.created_at|date:"F j, Y, g:i a" }}</p>
+
+                    <div class="flex gap-2">
+                        {% if notification.claim_id and "wants to collect" in notification.message %}
+                        <a href="{% url 'accept_claim_notification' notification.id %}"
+                           class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm transition">
+                            Accept Request
+                        </a>
+                        {% endif %}
+
+                        {% if notification.is_read == False %}
+                        <a href="{% url 'mark_as_read' notification.id %}"
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition">
+                            Mark as Read
+                        </a>
+                        {% endif %}
+
+                        <a href="{% url 'delete_notification' notification.id %}"
+                           class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition">
+                            Delete
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+                <span class="text-6xl mb-4 block">🔔</span>
+                <p class="text-gray-500 text-lg">No notifications.</p>
+            </div>
+        {% endif %}
+
+        <div class="mt-6">
+            <a href="{% url 'dashboard' %}"
+               class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition inline-block">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
