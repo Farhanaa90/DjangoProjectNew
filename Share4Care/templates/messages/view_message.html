@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Message Details</h2>
+
+        <div class="border-b pb-4 mb-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <p class="text-gray-600 text-sm">From:</p>
+                    <p class="text-gray-800 font-semibold">{{ message.sender.username }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600 text-sm">To:</p>
+                    <p class="text-gray-800 font-semibold">{{ message.receiver.username }}</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-gray-600 text-sm">Subject:</p>
+                <p class="text-gray-800 font-semibold text-xl">{{ message.subject }}</p>
+            </div>
+
+            <div>
+                <p class="text-gray-600 text-sm">Date:</p>
+                <p class="text-gray-800">{{ message.created_at|date:"F j, Y, g:i a" }}</p>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Message:</h3>
+            <p class="text-gray-700 whitespace-pre-wrap">{{ message.content }}</p>
+        </div>
+
+        <div class="flex gap-4">
+            {% if message.receiver == user %}
+                <a href="{% url 'send_message' message.sender.id %}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition">
+                    Reply
+                </a>
+                <a href="{% url 'inbox' %}"
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition">
+                    Back to Inbox
+                </a>
+            {% else %}
+                <a href="{% url 'sent_messages' %}"
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition">
+                    Back to Sent Messages
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
