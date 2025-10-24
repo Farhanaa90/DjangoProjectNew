@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ message.subject }}</h2>
+
+        <p class="text-gray-600 mb-6">
+            From: <strong>{{ message.sender.username }}</strong><br>
+            Sent on: {{ message.created_at|date:"M d, Y g:i A" }}
+        </p>
+
+        <div class="text-gray-800 mb-6">
+            {{ message.content }}
+        </div>
+
+        <a href="{% url 'inbox' %}"
+           class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition">
+            Back to Inbox
+        </a>
+    </div>
+</div>
+{% endblock %}
