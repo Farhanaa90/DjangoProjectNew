@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">Sent Messages</h2>
+            <a href="{% url 'inbox' %}"
+               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition">
+                Inbox
+            </a>
+        </div>
+
+        {% if messages %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left">To</th>
+                            <th class="px-6 py-3 text-left">Subject</th>
+                            <th class="px-6 py-3 text-left">Date</th>
+                            <th class="px-6 py-3 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for message in messages %}
+                        <tr class="border-t">
+                            <td class="px-6 py-4">
+                                <strong>{{ message.receiver.username }}</strong>
+                            </td>
+                            <td class="px-6 py-4">{{ message.subject }}</td>
+                            <td class="px-6 py-4">{{ message.created_at|date:"M d, Y g:i A" }}</td>
+                            <td class="px-6 py-4">
+                                <a href="{% url 'message_detail' message.id %}"
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+                <p class="text-gray-500 text-lg mb-4">You haven't sent any messages yet.</p>
+            </div>
+        {% endif %}
+
+        <div class="mt-6">
+            <a href="{% url 'dashboard' %}"
+               class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition inline-block">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
