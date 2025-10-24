@@ -97,20 +97,21 @@
             </div>
 
             <div class="flex gap-4">
-                {% if donation.donor == user %}
-                    <a href="{% url 'update_donation' donation.id %}"
-                       class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded transition">
+                 {% if donation.donor == user %}
+                    <a href="{% url 'update_donation' donation.id %}" class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded transition">
                         Edit Donation
                     </a>
-                    <a href="{% url 'delete_donation' donation.id %}"
-                       class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded transition">
+                    <a href="{% url 'delete_donation' donation.id %}" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded transition">
                         Delete Donation
                     </a>
-                {% endif %}
-                <a href="{% url 'my_donations' %}"
-                   class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition">
-                    Back to My Donations
-                </a>
+                    <a href="{% url 'my_donations' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition">
+                        Back to My Donations
+                    </a>
+                 {% else %}
+                    <a href="{% url 'browse_donations' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded transition">
+                        Back to Browse Donations
+                    </a>
+                 {% endif %}
             </div>
         </div>
     </div>

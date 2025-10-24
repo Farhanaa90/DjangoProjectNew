@@ -77,6 +77,7 @@
             <a href="{% url 'home' %}" class="text-2xl font-bold">Share4Care</a>
 
             <div class="flex items-center space-x-6">
+                <!-- About Us Dropdown (Click to toggle) -->
                 <details class="relative">
                     <summary class="hover:text-gray-200 transition flex items-center">
                         About Us
@@ -118,7 +119,12 @@
                 </details>
 
                 <a href="{% url 'home' %}" class="hover:text-gray-200 transition">Home</a>
-                <a href="{% url 'my_donations' %}" class="hover:text-gray-200 transition">My Donations</a>
+                {% if user_profile.user_type == 'donor' %}
+                    <a href="{% url 'my_donations' %}" class="hover:text-gray-200 transition">My Donations</a>
+                {% else %}
+                    <a href="{% url 'browse_donations' %}" class="hover:text-gray-200 transition">Browse Donations</a>
+                {% endif %}
+                <a href="{% url 'notifications' %}" class="hover:text-gray-200 transition">Notifications</a>
 
                 {% if user.is_authenticated %}
                     <details class="relative">
@@ -133,6 +139,7 @@
                             <a href="{% url 'profile' %}">View Profile</a>
                             <a href="{% url 'edit_profile' %}">Edit Profile</a>
                             <a href="{% url 'change_password' %}">Change Password</a>
+                            <a href="{% url 'delete_account' %}">Delete Account</a>
                             <hr>
                             <a href="{% url 'logout' %}" class="logout">Logout</a>
                         </div>
